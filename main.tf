@@ -33,6 +33,11 @@ resource "docker_image" "nginx" {
   keep_locally  = false   
 }
 
+resource "docker_image" "grafana" {
+  name          = "grafana/grafana:latest"
+  keep_locally  = false
+}
+
 # This creates a running docker containers from the image defined above and also, name the container 
 # It Maps container port to port 80 (nginx default port) to your computer local port 8080 
 #( this would allow your to access your deployed service local vai localhost:8080)
@@ -50,6 +55,19 @@ ports {
 }
 }
 
+resource "docker_container" "grafana" {
+   name = "grafana_container"
+   image = docker_image.grafana.image_id
+
+   ports {
+     internal = 3000
+     external = 3000
+   }
+   env = [
+    "GF_SECURITY_ADMIN_PASSWORD=yourStrongPassword"
+
+   ]
+}
 
 
 # Final note , how this block of code work together: 
